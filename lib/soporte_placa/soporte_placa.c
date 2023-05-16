@@ -171,8 +171,8 @@ void SP_Pin_setModo(SP_HPin hpin, SP_Pin_Modo modo){
          */
         SALIDA_2MHz_OPEN_DRAIN = 0b0110
     };
-    if(hPin >= SP_HPIN_LIMITE) return; // debiera generar un error
-    Pin const *pin = pinDeHandle(hPin);
+    if(hpin >= SP_HPIN_LIMITE) return; // debiera generar un error
+    Pin const *pin = pinDeHandle(hpin);
     __disable_irq();
     habilitaRelojPuerto(pin->puerto);
     switch (modo)
@@ -182,7 +182,7 @@ void SP_Pin_setModo(SP_HPin hpin, SP_Pin_Modo modo){
     break;case SP_PIN_ENTRADA_PULLUP:
         config_modo(pin,ENTRADA_PULLUP_PULLDN);
         pin->puerto->BSRR = 1 << pin->nrPin;
-    break;case SP_PIN_ENTRADA_PULLDN:
+    break;case SP_PIN_ENTRADA_PULLDON:
         config_modo(pin,ENTRADA_PULLUP_PULLDN);
         pin->puerto->BRR = 1 << pin->nrPin;
     break;case SP_PIN_SALIDA:
@@ -207,9 +207,9 @@ void SP_Pin_write(SP_HPin hPin, bool valor){
    Pin const *pin = pinDeHandle(hPin); 
 
     if(valor){
-        pin->puerto->BSRR =(1 << pin->nrPin); 
+        pin->puerto->BSRR =(1 << pin->nrPin); //Le asigna al registro BSRR (Registro de Set/Reset del bit del puerto) la máscara (donde el valor 1 está desplazado nrpin veces hacia la izquierda)
     }else{
-        pin->puerto->BRR = (1 << pin->nrPin); 
+        pin->puerto->BRR = (1 << pin->nrPin); //Accede al registro BRR (Registro de reset del bit del puerto) y lo modifica por la mascara
     }
    
 }

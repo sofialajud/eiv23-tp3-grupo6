@@ -33,7 +33,7 @@ typedef int SP_HPin;
 typedef enum SP_Pin_Modo{
     SP_PIN_ENTRADA,           // Entrada flotante
     SP_PIN_ENTRADA_PULLUP,    // Entrada con resistencia pull-up interna
-    SP_PIN_ENTRADA_PULLON,    // Entrada con resistencia pull-down interna
+    SP_PIN_ENTRADA_PULLDON,    // Entrada con resistencia pull-down interna
     SP_PIN_SALIDA,            // Salida push-pull
     SP_PIN_SALIDA_OPEN_DRAIN, // Salida con drenador abierto
 }SP_Pin_Modo;
