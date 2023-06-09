@@ -14,6 +14,7 @@
  */
 
 enum SP_Pines{
+    SP_PB6,
     SP_PB9,
     SP_PC13,
     SP_P_LED = SP_PC13,

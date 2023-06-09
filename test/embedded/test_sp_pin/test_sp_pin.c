@@ -22,43 +22,51 @@ void tearDown(void){
   La manera de formularlas es:
     1) Preparar el Entorno
     2) Ejecutar una función
-    3) Fijarse los resultados que devuelve*/
-static void test_SP_Pin_setModo_ENTRADA_FLOTANTE__DEBE_configurar_pin_como_ENTRADA_FLOTANTE(void){
-    uint32_t OFFSET = 4U;                               //Offset de configuración pin 9
-    uint32_t MASK_PIN9_MODO = (0xF << OFFSET);          //Máscara para los bits de CRH del pin 9
-    uint32_t MODO_ESPERADO = 0b0100;   
+    3) Fijarse los resultados que devuelve
+    LAS PRUEBAS LAS HAREMOS EN EL PIN B6*/
+//static void test_SP_Pin_setModo_ENTRADA_FLOTANTE__DEBE_configurar_pin_como_ENTRADA_FLOTANTE(void){
+//    uint32_t OFFSET = 4U;                               //Offset de configuración pin 9
+//    uint32_t MASK_PIN9_MODO = (0xF << OFFSET);          //Máscara para los bits de CRH del pin 9
+//    uint32_t MODO_ESPERADO = 0b0100;   
+//
+//    SP_Pin_setModo(SP_PB9,SP_PIN_SALIDA);
+//    uint32_t CRL_ANTERIOR = GPIOB->CRL;                    
+//    uint32_t CRH_ANTERIOR = GPIOB->CRH;
+//    uint32_t ODR_ANTERIOR = GPIOB->ODR;
+//
+//    SP_Pin_setModo(SP_PB9,SP_PIN_ENTRADA);
+//    uint32_t CRL_ACTUAL = GPIOB->CRL;                  
+//    uint32_t CRH_ACTUAL = GPIOB->CRH;
+//    uint32_t ODR_ACTUAL = GPIOB->ODR;
+//    uint32_t DELTA_CRL = CRL_ANTERIOR ^ CRL_ACTUAL;       //Guardan en 1 los bits que se cambiaron y en 0 los que no se cambiaron
+//    uint32_t DELTA_CRH = CRH_ANTERIOR ^ CRH_ACTUAL; 
+//    uint32_t DELTA_ODR = ODR_ANTERIOR ^ ODR_ACTUAL;
+//    uint32_t MODO_ACTUAL = (GPIOB->CRH & MASK_PIN9_MODO) >> OFFSET; //Extrae los 4 bits de modo de CRH para el pin 9
+//    bool RELOJ_PUERTO_B_ON = RCC->APB2ENR & RCC_APB2ENR_IOPBEN;     //Sera verdadedo si el puerto B está encendido
+//    TEST_ASSERT_TRUE(RELOJ_PUERTO_B_ON);                            //Es verdadero si se encendió el reloj del puerto B
+//    TEST_ASSERT_FALSE(DELTA_CRL);                                   //
+//    TEST_ASSERT_FALSE(DELTA_ODR);                                   //
+//    TEST_ASSERT_BITS_LOW(~MASK_PIN9_MODO,DELTA_CRH);                //se espera que los bits de CRH que no pertenezcan al modo del pin9 no cambien
+//    TEST_ASSERT_TRUE(MODO_ESPERADO & MODO_ACTUAL);                  //se espera que los 4 bits de modo extraidos sean iguales a los de modo esperado
 
-    SP_Pin_setModo(SP_PB9,SP_PIN_SALIDA);
-    uint32_t CRL_ANTERIOR = GPIOB->CRL;                    
-    uint32_t CRH_ANTERIOR = GPIOB->CRH;
-    uint32_t ODR_ANTERIOR = GPIOB->ODR;
-
-    SP_Pin_setModo(SP_PB9,SP_PIN_ENTRADA);
-    uint32_t CRL_ACTUAL = GPIOB->CRL;                  
-    uint32_t CRH_ACTUAL = GPIOB->CRH;
-    uint32_t ODR_ACTUAL = GPIOB->ODR;
-    uint32_t DELTA_CRL = CRL_ANTERIOR ^ CRL_ACTUAL;       //Guardan en 1 los bits que se cambiaron y en 0 los que no se cambiaron
-    uint32_t DELTA_CRH = CRH_ANTERIOR ^ CRH_ACTUAL; 
-    uint32_t DELTA_ODR = ODR_ANTERIOR ^ ODR_ACTUAL;
-    uint32_t MODO_ACTUAL = (GPIOB->CRH & MASK_PIN9_MODO) >> OFFSET; //Extrae los 4 bits de modo de CRH para el pin 9
-    bool RELOJ_PUERTO_B_ON = RCC->APB2ENR & RCC_APB2ENR_IOPBEN;     //Sera verdadedo si el puerto B está encendido
-    TEST_ASSERT_TRUE(RELOJ_PUERTO_B_ON);                            //Es verdadero si se encendió el reloj del puerto B
-    TEST_ASSERT_FALSE(DELTA_CRL);                                   //
-    TEST_ASSERT_FALSE(DELTA_ODR);                                   //
-    TEST_ASSERT_BITS_LOW(~MASK_PIN9_MODO,DELTA_CRH);                //se espera que los bits de CRH que no pertenezcan al modo del pin9 no cambien
-    TEST_ASSERT_TRUE(MODO_ESPERADO & MODO_ACTUAL);                  //se espera que los 4 bits de modo extraidos sean iguales a los de modo esperado
-
-}
+//}
 //static void test_SP_Pin_setModo_ENTRADA_PULLUP_PULLDN__DEBE_configurar_pin_como_ENTRADA_PULLUP_PULLDN(void){}
-//static void test_SP_Pin_setModo_SALIDA_2MHz__DEBE_configurar_pin_como_SALIDA_2MHz(void){}
+static void test_SP_Pin_setModo_SALIDA_2MHz__DEBE_configurar_pin_como_SALIDA_2MHz(void){
+    SP_Pin_setModo(SP_PB6 , SP_PIN_SALIDA);
+    SP_Pin_write(SP_PB6, 0);
+    TEST_ASSERT_FALSE(SP_Pin_read(SP_PB6));
+    SP_Pin_write(SP_PB6, 1);
+    TEST_ASSERT_TRUE(SP_Pin_read(SP_PB6));
+}
 //static void test_SP_Pin_setModo_SALIDA_2MHz_OPEN_DRAIN__DEBE_configurar_pin_como_SALIDA_2MHz_OPEN_DRAIN(void){}
+
 
 int main(void){
     SP_init();
     SP_delay(1000);
     UNITY_BEGIN();
-    RUN_TEST(test_SP_Pin_setModo_ENTRADA_FLOTANTE__DEBE_configurar_pin_como_ENTRADA_FLOTANTE); // Ejecución de prueba: al poner la lista de argumentos a continuación del nombre de la funcíon entonces el nombre se convierte en objeto función que se evalúa a un puntero a función y esto se pasa como argumento a la macro RUN_TEST (en C los nombres de las funciones se evalúan a la dirección de memoria de la función)
-//    RUN_TEST();
+//    RUN_TEST(test_SP_Pin_setModo_ENTRADA_FLOTANTE__DEBE_configurar_pin_como_ENTRADA_FLOTANTE); // Ejecución de prueba: al poner la lista de argumentos a continuación del nombre de la funcíon entonces el nombre se convierte en objeto función que se evalúa a un puntero a función y esto se pasa como argumento a la macro RUN_TEST (en C los nombres de las funciones se evalúan a la dirección de memoria de la función)
+    RUN_TEST(test_SP_Pin_setModo_SALIDA_2MHz__DEBE_configurar_pin_como_SALIDA_2MHz);
     UNITY_END();
     return 0;
 }

@@ -96,6 +96,7 @@ typedef struct Pin{
 
 static Pin const pines[SP_HPIN_LIMITE] = {
     [SP_PB9]={.puerto=GPIOB,.nrPin=9},
+    [SP_PB6]={.puerto=GPIOB,.nrPin=6},
     [SP_PC13]={.puerto=GPIOC,.nrPin=13},
 };
 
