@@ -51,22 +51,46 @@ void tearDown(void){
 
 //}
 //static void test_SP_Pin_setModo_ENTRADA_PULLUP_PULLDN__DEBE_configurar_pin_como_ENTRADA_PULLUP_PULLDN(void){}
-static void test_SP_Pin_setModo_SALIDA_2MHz__DEBE_configurar_pin_como_SALIDA_2MHz(void){
+//static void test_SP_Pin_setModo_SALIDA_2MHz__DEBE_configurar_pin_como_SALIDA_2MHz(void){}
+//static void test_SP_Pin_setModo_SALIDA_2MHz_OPEN_DRAIN__DEBE_configurar_pin_como_SALIDA_2MHz_OPEN_DRAIN(void){}
+static void test_SP_Pin__SI_el_pin_esta_configurado_como_SALIDA_Push_Pull_y_se_escribe_un_CERO_debiera_leerse_0(void){
     SP_Pin_setModo(SP_PB6 , SP_PIN_SALIDA);
     SP_Pin_write(SP_PB6, 0);
     TEST_ASSERT_FALSE(SP_Pin_read(SP_PB6));
+}
+
+static void test_SP_Pin__SI_el_pin_esta_configurado_como_SALIDA_Push_Pull_y_se_escribe_un_UNO_debiera_leerse_1(void){
+    SP_Pin_setModo(SP_PB6 , SP_PIN_SALIDA);
     SP_Pin_write(SP_PB6, 1);
     TEST_ASSERT_TRUE(SP_Pin_read(SP_PB6));
 }
-//static void test_SP_Pin_setModo_SALIDA_2MHz_OPEN_DRAIN__DEBE_configurar_pin_como_SALIDA_2MHz_OPEN_DRAIN(void){}
 
+static void test_SP_Pin__SI_un_pin_configurado_como_ENTRADA_que_tiene_un_nivel_ALTO_debiera_leerse_1(void){
+    SP_Pin_setModo(SP_PB6 , SP_PIN_SALIDA); // Se configura como salida
+    SP_Pin_write(SP_PB6, 1);                // El pin se pone en ese nivel lógico y se queda en ese nivel
+    SP_Pin_setModo(SP_PB6 , SP_PIN_ENTRADA);// Al ponerlo como entrada se desconecta el driver de salida, entonces queda cargado el capacitor del pin
+    SP_Pin_write(SP_PB6, 0);                // Se cambia el valor de la salida pero ya no está conectada
+    TEST_ASSERT_TRUE(SP_Pin_read(SP_PB6));  // Debe leer el valor que tenía antes
+
+}
+
+static void test_SP_Pin__SI_un_pin_configurado_como_ENTRADA_que_tiene_un_nivel_BAJO_debiera_leerse_0(void){
+    SP_Pin_setModo(SP_PB6 , SP_PIN_SALIDA); // Se configura como salida
+    SP_Pin_write(SP_PB6, 0);                // El pin se pone en ese nivel lógico y se queda en ese nivel
+    SP_Pin_setModo(SP_PB6 , SP_PIN_ENTRADA);// Al ponerlo como entrada se desconecta el driver de salida, entonces queda cargado el capacitor del pin
+    SP_Pin_write(SP_PB6, 1);                // Se cambia el valor de la salida pero ya no está conectada
+    TEST_ASSERT_FALSE(SP_Pin_read(SP_PB6));  // Debe leer el valor que tenía antes}
+}
 
 int main(void){
     SP_init();
     SP_delay(1000);
     UNITY_BEGIN();
 //    RUN_TEST(test_SP_Pin_setModo_ENTRADA_FLOTANTE__DEBE_configurar_pin_como_ENTRADA_FLOTANTE); // Ejecución de prueba: al poner la lista de argumentos a continuación del nombre de la funcíon entonces el nombre se convierte en objeto función que se evalúa a un puntero a función y esto se pasa como argumento a la macro RUN_TEST (en C los nombres de las funciones se evalúan a la dirección de memoria de la función)
-    RUN_TEST(test_SP_Pin_setModo_SALIDA_2MHz__DEBE_configurar_pin_como_SALIDA_2MHz);
+    RUN_TEST(test_SP_Pin__SI_el_pin_esta_configurado_como_SALIDA_Push_Pull_y_se_escribe_un_CERO_debiera_leerse_0);
+    RUN_TEST(test_SP_Pin__SI_el_pin_esta_configurado_como_SALIDA_Push_Pull_y_se_escribe_un_UNO_debiera_leerse_1);
+    RUN_TEST(test_SP_Pin__SI_un_pin_configurado_como_ENTRADA_que_tiene_un_nivel_ALTO_debiera_leerse_1);
+    RUN_TEST(test_SP_Pin__SI_un_pin_configurado_como_ENTRADA_que_tiene_un_nivel_BAJO_debiera_leerse_0);
     UNITY_END();
     return 0;
 }
