@@ -53,10 +53,11 @@ void tearDown(void){
 //static void test_SP_Pin_setModo_ENTRADA_PULLUP_PULLDN__DEBE_configurar_pin_como_ENTRADA_PULLUP_PULLDN(void){}
 //static void test_SP_Pin_setModo_SALIDA_2MHz__DEBE_configurar_pin_como_SALIDA_2MHz(void){}
 //static void test_SP_Pin_setModo_SALIDA_2MHz_OPEN_DRAIN__DEBE_configurar_pin_como_SALIDA_2MHz_OPEN_DRAIN(void){}
+
 static void test_SP_Pin__SI_el_pin_esta_configurado_como_SALIDA_Push_Pull_y_se_escribe_un_CERO_debiera_leerse_0(void){
-    SP_Pin_setModo(SP_PB6 , SP_PIN_SALIDA);
-    SP_Pin_write(SP_PB6, 0);
-    TEST_ASSERT_FALSE(SP_Pin_read(SP_PB6));
+    SP_Pin_setModo(SP_PB6 , SP_PIN_SALIDA); // Se configura como salida
+    SP_Pin_write(SP_PB6, 0);                // Se pone en el nivel lógico 0
+    TEST_ASSERT_FALSE(SP_Pin_read(SP_PB6)); // Debe leer 0
 }
 
 static void test_SP_Pin__SI_el_pin_esta_configurado_como_SALIDA_Push_Pull_y_se_escribe_un_UNO_debiera_leerse_1(void){
