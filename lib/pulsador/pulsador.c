@@ -1,4 +1,4 @@
-#include "pulsador.h"
+#include <pulsador.h>
 
 void Pulsador_init(Pulsador *self, 
                    Maquina *destino,

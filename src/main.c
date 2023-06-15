@@ -1,26 +1,94 @@
 #include <soporte_placa.h>
+#include "controlador_luz.h"
+#include <pulsador.h>
+#include <despacho_retardado.h>
+#include <stddef.h>
+#include "mi_maquina.h"
+
+#define PIN_LUZ SP_PC13
+#define PIN_PULSADOR SP_PB9
+
+#define HISTERESIS_ANTIRREBOTE 5
 
 #define LUZ_ON 0
-#define LUZ_OFF 1
-#define PULSADOR_ACTIVO 0
-#define PULSADOR_NORMAL 1
+
+#define PULSADOR_NIVEL_ACTIVO 0
+
+#define TIEMPO_ON 60000
 
 
-int main(void){
-    SP_init();
-    SP_Pin_setModo(SP_PB9,SP_PIN_ENTRADA_PULLUP);
-    SP_Pin_setModo(SP_P_LED,SP_PIN_SALIDA);
-    SP_Pin_write(SP_P_LED,LUZ_OFF);
+static Maquina * controlador;
+static Pulsador pulsador[1];
+static DespachoRetardado despachoRetardado[1];
+static Maquina * mimaquina;
+
+/**
+ * @brief Inicializa el estado del programa para iniciar la ejecución
+ * 
+ */
+static void setup(void);
+
+
+int main(void){    
+    setup();
     for (;;){
-        while(SP_Pin_read(SP_PB9) != PULSADOR_ACTIVO);
-        SP_Pin_write(SP_P_LED,LUZ_ON);
-        SP_delay(60000);
-        SP_Pin_write(SP_P_LED,LUZ_OFF);
+        Maquina_procesa(controlador);
+        DespachoRetardado_procesa(despachoRetardado);
+        Pulsador_procesa(pulsador);
+        Maquina_procesa(mimaquina);
     }
     return 0;
 }
 
-//   VERSIÓN ANTERIOR
+
+
+static void setup(void){
+    static ControladorLuz instanciaControlador;
+    static MiMaquina instanciaMiMaquina;
+    
+    SP_init();
+    
+    DespachoRetardado_init(despachoRetardado);
+
+    ControladorLuz_init(&instanciaControlador,TIEMPO_ON,PIN_LUZ,LUZ_ON,despachoRetardado);  
+    controlador = ControladorLuz_asMaquina(&instanciaControlador);
+    Maquina_procesa(controlador); // Reset inicializa pin con luz apada
+
+    MiMaquina_init(&instanciaMiMaquina, controlador, despachoRetardado);
+    mimaquina = MiMaquina_asMaquina(&instanciaMiMaquina);
+    Maquina_procesa(mimaquina);
+
+    Pulsador_init(pulsador, 
+                  controlador,
+                  EV_BOTON_PULSADO,
+                  PIN_PULSADOR,
+                  PULSADOR_NIVEL_ACTIVO,
+                  HISTERESIS_ANTIRREBOTE);
+}
+// VERSION CON ABSTRACCIÓN
+// #include <soporte_placa.h>
+// 
+// #define LUZ_ON 0
+// #define LUZ_OFF 1
+// #define PULSADOR_ACTIVO 0
+// #define PULSADOR_NORMAL 1
+// 
+// 
+// int main(void){
+//     SP_init();
+//     SP_Pin_setModo(SP_PB9,SP_PIN_ENTRADA_PULLUP);
+//     SP_Pin_setModo(SP_P_LED,SP_PIN_SALIDA);
+//     SP_Pin_write(SP_P_LED,LUZ_OFF);
+//     for (;;){
+//         while(SP_Pin_read(SP_PB9) != PULSADOR_ACTIVO);
+//         SP_Pin_write(SP_P_LED,LUZ_ON);
+//         SP_delay(60000);
+//         SP_Pin_write(SP_P_LED,LUZ_OFF);
+//     }
+//     return 0;
+// }
+
+//   VERSIÓN CON FUERZA BRUTA
 //  #include <stm32f1xx.h>
 //  
 //  #define LUZ_ON 0           
