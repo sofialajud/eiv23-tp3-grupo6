@@ -76,6 +76,6 @@ static Resultado estadoMudanza(Maquina *ctx, Evento evento){
     break; default:
         r.codigo= RES_IGNORADO;
     break;
-    return r;
     }
+    return r;
 }

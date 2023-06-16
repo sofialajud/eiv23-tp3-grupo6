@@ -50,7 +50,7 @@ static Resultado estadodeCuenta(Maquina *ctx, Evento e){
     break; case EV_BOTON_PULSADO:
         ++(self-> Contador);
         r.codigo=RES_PROCESADO;
-        if (self-> Contador==3)
+        if (self-> Contador>2)
         {
             r.codigo=RES_TRANSICION;
             r.nuevoEstado=estadoEspera;

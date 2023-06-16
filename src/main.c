@@ -59,7 +59,7 @@ static void setup(void){
     Maquina_procesa(mimaquina);
 
     Pulsador_init(pulsador, 
-                  controlador,
+                  mimaquina,
                   EV_BOTON_PULSADO,
                   PIN_PULSADOR,
                   PULSADOR_NIVEL_ACTIVO,
